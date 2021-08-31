@@ -43,6 +43,10 @@
 // Declarations of global (public) variables
 //**************************************************************************************************
 
+#define  RAK811_MODE_LoRaWAN            ('0')
+#define  RAK811_MODE_LORA_P2P           ('1')
+
+
 extern const char RAK811_confMode[];
 
 // configure LoRaP2P parameters
@@ -58,7 +62,11 @@ extern const char RAK811_FirstPartStrToSend[];
 // Declarations of global (public) functions
 //**************************************************************************************************
 
+// Init RAK811
 extern void RAK811_init(void);
+
+// Configure RAK811
+extern void RAK811_confMode(char mode);
 
 // send meassage to RAK811
 extern void RAK811_sendMessage(const char* const message);
