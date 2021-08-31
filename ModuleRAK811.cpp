@@ -40,7 +40,7 @@
 #include "ModuleRAK811.h"
 
 #include <Arduino.h>
-
+#include <string.h>
 
 //**************************************************************************************************
 // Verification of the imported configuration parameters
@@ -67,14 +67,14 @@
 // Definitions of local (private) constants
 //**************************************************************************************************
 
-// None.
+#define RAK811_SIZE_BUF                 (512)
 
 
 //**************************************************************************************************
 // Definitions of static global (private) variables
 //**************************************************************************************************
 
-// None.
+static char buf[RAK811_SIZE_BUF];
 
 
 //**************************************************************************************************
@@ -227,8 +227,30 @@ extern void RAK811_confTransferMode(const char mode)
 //--------------------------------------------------------------------------------------------------
 // @Parameters    data - pointer on data to transmit              
 //**************************************************************************************************
-extern void RAK811_sendData(const char* const data)
+extern void RAK811_sendData(const char* data)
 {
+    int size = strlen(data);
+    uint8_t temp=0;
+    char *pBuf = buf;
+    
+    //clear buf
+    for (int i=0;i<RAK811_SIZE_BUF;i++)
+    {
+        buf[i] = 0;
+    }
+    
+    if (RAK811_SIZE_BUF > size)
+    {
+        for(int i=0;i<size;i++)
+        {
+            temp = (uint8_t)*data;
+            itoa(((temp&0xf0)>>4),pBuf,16);
+            pBuf++;
+            itoa((temp&0x0f),pBuf,16);
+        }
+    }
+    
+    RAK811_sendMessage(buf);
     
 }// end of RAK811_sendData
                          

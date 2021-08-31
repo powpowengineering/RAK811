@@ -70,7 +70,7 @@ extern void RAK811_confP2Pprm(const char* const freq,
 extern void RAK811_confTransferMode(const char mode);
 
 // send data
-extern void RAK811_sendData(const char* const data);
+extern void RAK811_sendData(const char* data);
 
 // send meassage to RAK811
 extern void RAK811_sendMessage(const char* const message);
