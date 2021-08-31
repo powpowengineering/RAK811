@@ -53,16 +53,8 @@
 // Definitions of global (public) variables
 //**************************************************************************************************
 
-//configure RAK811 to work in LoRaP2P mode
-const char RAK811_confMode[] = {"at+set_config=lora:work_mode:1"};
+// None.
 
-// configure LoRaP2P parameters
-const char RAK811_confPrm[] = {"at+set_config=lorap2p:869525000:7:0:1:5:20"};
-
-// switch the state of the LoRa transceiver to sending state
-const char RAK811_taransferMode[] = {"at+set_config=lorap2p:transfer_mode:2"};
-
-const char RAK811_FirstPartStrToSend[] = {"at+send=lorap2p:123"};
 
 //**************************************************************************************************
 // Declarations of local (private) data types
@@ -135,6 +127,111 @@ void RAK811_sendMessage(const char* const message)
 
 
 
+//**************************************************************************************************
+// @Function      RAK811_confMode()
+//--------------------------------------------------------------------------------------------------
+// @Description   Configure RAK811
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    mode - '0' LoRaWAN
+//                     - '1' LoRa P2P
+//**************************************************************************************************
+extern void RAK811_confMode(char mode)
+{
+    if (RAK811_MODE_LoRaWAN == mode)
+    {
+        RAK811_sendMessage("at+set_config=lora:work_mode:0");
+    }
+    else if (RAK811_MODE_LORA_P2P == mode)
+    {
+        RAK811_sendMessage("at+set_config=lora:work_mode:1");
+    }
+}// end of RAK811_confMode
+
+
+
+//**************************************************************************************************
+// @Function      RAK811_confP2Pprm()
+//--------------------------------------------------------------------------------------------------
+// @Description   configure LoRaP2P parameters
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    freq - Frequency, the unit is Hz
+//                spreadfactor - Spreading factor
+//                bandwidth - 0: 125 kHz
+//                            1: 250 kHz
+//                            2: 500 kHz
+//                codingrate - 1: 4/5
+//                             2: 4/6
+//                             3: 4/7
+//                             4: 4/8 
+//                preamlen - Preamble Length. 5~65535
+//                power - TX power. The unit is in dBm. 5~20
+//**************************************************************************************************
+extern void RAK811_confP2Pprm(const char* const freq,
+                              const char spreadfactor,
+                              const char bandwidth,
+                              const char codingrate,
+                              const char preamlen,
+                              const char power)
+{
+    char strPrm[64];
+    
+    snprintf(strPrm,64,"at+set_config=lorap2p:%s:%c:%c:%c:%c:%c",freq,spreadfactor,bandwidth,\
+                                                                    codingrate,preamlen,power);
+    RAK811_sendMessage(strPrm);                                                               
+}// end of RAK811_confP2Pprm
+                              
+
+               
+//**************************************************************************************************
+// @Function      RAK811_confTransferMode()
+//--------------------------------------------------------------------------------------------------
+// @Description   configure LoRaP2P parameters
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    mode 1: receiver mode
+//                     2: sender mode
+//**************************************************************************************************               
+extern void RAK811_confTransferMode(const char mode)
+{
+    if (RAK811_SENDER_MODE == mode)
+    {
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:2");
+    }
+    else if (RAK811_RECEIVER_MODE == mode)
+    {
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:1");
+    }
+}// end of RAK811_confTransferMode
+                         
+                         
+
+//**************************************************************************************************
+// @Function      RAK811_sendData()
+//--------------------------------------------------------------------------------------------------
+// @Description   send data
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    data - pointer on data to transmit              
+//**************************************************************************************************
+extern void RAK811_sendData(const char* const data)
+{
+    
+}// end of RAK811_sendData
+                         
 //**************************************************************************************************
 //==================================================================================================
 // Definitions of local (private) functions
