@@ -43,12 +43,22 @@
 // Declarations of global (public) variables
 //**************************************************************************************************
 
-// None.
+extern const char RAK811_confMode[];
+
+// configure LoRaP2P parameters
+extern const char RAK811_confPrm[];
+
+// switch the state of the LoRa transceiver to sending state
+extern const char RAK811_taransferMode[];
+
+extern const char RAK811_FirstPartStrToSend[];
 
 
 //**************************************************************************************************
 // Declarations of global (public) functions
 //**************************************************************************************************
+
+extern void RAK811_init(void);
 
 // send meassage to RAK811
 extern void RAK811_sendMessage(const char* const message);
