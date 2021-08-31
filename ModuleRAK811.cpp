@@ -41,8 +41,6 @@
 
 #include <Arduino.h>
 
-#include "Init.h"
-
 
 //**************************************************************************************************
 // Verification of the imported configuration parameters
@@ -62,9 +60,9 @@ const char RAK811_confMode[] = {"at+set_config=lora:work_mode:1"};
 const char RAK811_confPrm[] = {"at+set_config=lorap2p:869525000:7:0:1:5:20"};
 
 // switch the state of the LoRa transceiver to sending state
-const char RAK811_taransferMode[] = {"at+set_config=lorap2p: transfer_mode:2"};
+const char RAK811_taransferMode[] = {"at+set_config=lorap2p:transfer_mode:2"};
 
-const char RAK811_FirstPartStrToSend[] = {"at+send=lorap2p:"};
+const char RAK811_FirstPartStrToSend[] = {"at+send=lorap2p:123"};
 
 //**************************************************************************************************
 // Declarations of local (private) data types
@@ -100,6 +98,22 @@ const char RAK811_FirstPartStrToSend[] = {"at+send=lorap2p:"};
 //==================================================================================================
 //**************************************************************************************************
 
+//**************************************************************************************************
+// @Function      RAK811_init()
+//--------------------------------------------------------------------------------------------------
+// @Description   Init RAK811
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    None.
+//**************************************************************************************************
+void RAK811_init(void)
+{
+	Serial2.begin(115200);
+}// end of RAK811_init()
+
 
 
 //**************************************************************************************************
@@ -113,9 +127,10 @@ const char RAK811_FirstPartStrToSend[] = {"at+send=lorap2p:"};
 //--------------------------------------------------------------------------------------------------
 // @Parameters    message - data to send
 //**************************************************************************************************
-void RAK811_sendMessage(const char* const message);
+void RAK811_sendMessage(const char* const message)
 {
-    Serial2.print(message);
+    Serial2.println(message);
+	Serial.println(message);
 }// end of RAK811_sendMessage()
 
 
