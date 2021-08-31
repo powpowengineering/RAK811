@@ -45,18 +45,8 @@
 
 #define  RAK811_MODE_LoRaWAN            ('0')
 #define  RAK811_MODE_LORA_P2P           ('1')
-
-
-extern const char RAK811_confMode[];
-
-// configure LoRaP2P parameters
-extern const char RAK811_confPrm[];
-
-// switch the state of the LoRa transceiver to sending state
-extern const char RAK811_taransferMode[];
-
-extern const char RAK811_FirstPartStrToSend[];
-
+#define  RAK811_RECEIVER_MODE           ('1')
+#define  RAK811_SENDER_MODE             ('2')
 
 //**************************************************************************************************
 // Declarations of global (public) functions
@@ -66,10 +56,27 @@ extern const char RAK811_FirstPartStrToSend[];
 extern void RAK811_init(void);
 
 // Configure RAK811
-extern void RAK811_confMode(char mode);
+extern void RAK811_confMode(const char mode);
+
+// configure LoRaP2P parameters
+extern void RAK811_confP2Pprm(const char* const freq,
+                              const char spreadfactor,
+                              const char bandwidth,
+                              const char codingrate,
+                              const char preamlen,
+                              const har power);
+
+// configure taransfer mode
+extern void RAK811_confTransferMode(const char mode);
+
+// send data
+extern void RAK811_sendData(const char* data);
 
 // send meassage to RAK811
 extern void RAK811_sendMessage(const char* const message);
+
+// parsing data
+extern void RAK811_hexToAscii(const char* dataHex, char* dataAscii);
 
 
 
