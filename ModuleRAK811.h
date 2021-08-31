@@ -75,6 +75,9 @@ extern void RAK811_sendData(const char* data);
 // send meassage to RAK811
 extern void RAK811_sendMessage(const char* const message);
 
+// parsing data
+extern void RAK811_hexToAscii(const char* dataHex, char* dataAscii);
+
 
 
 
