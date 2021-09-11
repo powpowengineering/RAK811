@@ -59,24 +59,24 @@ extern void RAK811_init(void);
 extern void RAK811_confMode(const char mode);
 
 // configure LoRaP2P parameters
-extern void RAK811_confP2Pprm(const char* const freq,
-                              const char spreadfactor,
-                              const char bandwidth,
-                              const char codingrate,
-                              const char preamlen,
-                              const har power);
+extern void RAK811_confP2Pprm(char* freq,
+                              unsigned char spreadfactor,
+                              unsigned char bandwidth,
+                              unsigned char codingrate,
+                              unsigned char preamlen,
+                              unsigned char power);
 
 // configure taransfer mode
 extern void RAK811_confTransferMode(const char mode);
 
 // send data
-extern void RAK811_sendData(const char* data);
+extern void RAK811_sendData( char* data);
 
 // send meassage to RAK811
-extern void RAK811_sendMessage(const char* const message);
+extern void RAK811_sendMessage( char* message);
 
 // parsing data
-extern void RAK811_hexToAscii(const char* dataHex, char* dataAscii);
+extern void RAK811_hexToAscii( char* dataHex, char* dataAscii);
 
 
 

@@ -120,7 +120,7 @@ void RAK811_init(void)
 //--------------------------------------------------------------------------------------------------
 // @Parameters    message - data to send
 //**************************************************************************************************
-void RAK811_sendMessage(const char* const message)
+void RAK811_sendMessage(char* message)
 {
     Serial2.println(message);
 	Serial.println(message);
@@ -144,11 +144,11 @@ extern void RAK811_confMode(char mode)
 {
     if (RAK811_MODE_LoRaWAN == mode)
     {
-        RAK811_sendMessage("at+set_config=lora:work_mode:0");
+        RAK811_sendMessage("at+set_config=lora:work_mode:0\r\n");
     }
     else if (RAK811_MODE_LORA_P2P == mode)
     {
-        RAK811_sendMessage("at+set_config=lora:work_mode:1");
+        RAK811_sendMessage("at+set_config=lora:work_mode:1\r\n");
     }
 }// end of RAK811_confMode
 
@@ -175,16 +175,16 @@ extern void RAK811_confMode(char mode)
 //                preamlen - Preamble Length. 5~65535
 //                power - TX power. The unit is in dBm. 5~20
 //**************************************************************************************************
-extern void RAK811_confP2Pprm(const char* const freq,
-                              const char spreadfactor,
-                              const char bandwidth,
-                              const char codingrate,
-                              const char preamlen,
-                              const char power)
+extern void RAK811_confP2Pprm( char* freq,
+                               unsigned char spreadfactor,
+                               unsigned char bandwidth,
+                               unsigned char codingrate,
+                               unsigned char preamlen,
+                               unsigned char power)
 {
     char strPrm[64];
     
-    snprintf(strPrm,64,"at+set_config=lorap2p:%s:%c:%c:%c:%c:%c",freq,spreadfactor,bandwidth,\
+    snprintf(strPrm,64,"at+set_config=lorap2p:%s:%d:%d:%d:%d:%d\r\n",freq,spreadfactor,bandwidth,\
                                                                     codingrate,preamlen,power);
     RAK811_sendMessage(strPrm);                                                               
 }// end of RAK811_confP2Pprm
@@ -207,11 +207,11 @@ extern void RAK811_confTransferMode(const char mode)
 {
     if (RAK811_SENDER_MODE == mode)
     {
-        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:2");
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:2\r\n");
     }
     else if (RAK811_RECEIVER_MODE == mode)
     {
-        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:1");
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:1\r\n");
     }
 }// end of RAK811_confTransferMode
                          
@@ -228,7 +228,7 @@ extern void RAK811_confTransferMode(const char mode)
 //--------------------------------------------------------------------------------------------------
 // @Parameters    data - pointer on data to transmit              
 //**************************************************************************************************
-extern void RAK811_sendData(const char* data)
+extern void RAK811_sendData(char* data)
 {
     int size = strlen(data);
     uint8_t temp=0;
@@ -251,6 +251,8 @@ extern void RAK811_sendData(const char* data)
         }
     }
     
+    
+      
     RAK811_sendMessage(buf);
     
 }// end of RAK811_sendData
@@ -269,7 +271,7 @@ extern void RAK811_sendData(const char* data)
 // @Parameters    dataIn - hex format
 //                dataout - symbol format                 
 //**************************************************************************************************
-extern void RAK811_hexToAscii(const char* dataHex, char* dataAscii)
+extern void RAK811_hexToAscii(char* dataHex, char* dataAscii)
 {
     long int temp=0;
     char strtm[3];
