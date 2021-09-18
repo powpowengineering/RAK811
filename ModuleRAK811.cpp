@@ -340,10 +340,11 @@ extern void RAK811_hexToAscii(char* dataHex, char* dataAscii)
 {
     long int temp=0;
     char strtm[3];
+		unsigned int size = strlen(dataHex);
 
-    if (strlen(dataHex) > 0)
+		for (int i=0;i<size;i++)
     {
-        strtm[0] = *dataHex;
+				strtm[0] = *dataHex;
         dataHex++;
         strtm[1] = *dataHex;
         dataHex++;
@@ -351,7 +352,7 @@ extern void RAK811_hexToAscii(char* dataHex, char* dataAscii)
 
         temp = strtol(strtm,0,16);
         *dataAscii = (char)temp;
-        dataAscii++;
+				dataAscii++;
     }
 
 
