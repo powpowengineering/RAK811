@@ -1,1 +1,3 @@
 date=xx.xx.xx|time=xx.xx.xx|t1=xx.x|t2=xx.x|t3=xx.x|Hum=xxx.x|Pin=xxx.xx|Pout=xxx.xx|Vbat=x.xx|cnt1=xxxx|cnt2=xxxx
+
+date=xx.xx.xx|time=xx.xx.xx|t1=xx.x|Hum=xxx.x|P=xxxx.x|Vbat=x.xx|cnt1=xxxx|cnt2=xxxx

@@ -12,11 +12,11 @@
 // @History       Version  Author      Comment
 // XX.XX.XXXX     1.0.0    KPS         First release.
 //**************************************************************************************************
-
+/*
 #ifndef RAK811_H
 #define RAK811_H
 
-
+*/
 
 //**************************************************************************************************
 // Project Includes
@@ -53,34 +53,37 @@
 //**************************************************************************************************
 
 // Init RAK811
-extern void RAK811_init(void);
+void RAK811_init(void);
 
 // Configure RAK811
-extern void RAK811_confMode(const char mode);
+void RAK811_confMode(const char mode);
 
 // configure LoRaP2P parameters
-extern void RAK811_confP2Pprm(char* freq,
-                              unsigned char spreadfactor,
-                              unsigned char bandwidth,
-                              unsigned char codingrate,
-                              unsigned char preamlen,
-                              unsigned char power);
+void RAK811_confP2Pprm(char* freq,
+					  unsigned char spreadfactor,
+					  unsigned char bandwidth,
+					  unsigned char codingrate,
+					  unsigned char preamlen,
+					  unsigned char power);
 
 // configure taransfer mode
-extern void RAK811_confTransferMode(const char mode);
+void RAK811_confTransferMode(const char mode);
 
 // send data
-extern void RAK811_sendData( char* data);
+void RAK811_sendData( char* data);
 
 // send meassage to RAK811
-extern void RAK811_sendMessage( char* message);
+void RAK811_sendMessage( char* message);
+
+// receive data from RAK811
+int RAK811_receiveData(char* data, const unsigned int size);
 
 // parsing data
-extern void RAK811_hexToAscii( char* dataHex, char* dataAscii);
+void RAK811_hexToAscii( char* dataHex, char* dataAscii);
 
 
 
 
-#endif // #ifndef RAK811_H
+//#endif // #ifndef RAK811_H
 
 //****************************************** end of file *******************************************

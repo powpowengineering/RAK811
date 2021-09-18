@@ -232,30 +232,102 @@ extern void RAK811_sendData(char* data)
 {
     int size = strlen(data);
     uint8_t temp=0;
-    char *pBuf = buf;
+    char *pBuf;
     
+
     //clear buf
     for (int i=0;i<RAK811_SIZE_BUF;i++)
     {
         buf[i] = 0;
     }
     
+	snprintf(buf,256,"at+send=lorap2p:");
+	
+	pBuf = buf+strlen(buf);
+	
     if (RAK811_SIZE_BUF > size)
     {
-        for(int i=0;i<size;i++)
+    Serial.print("\r\nSize data = ");
+    Serial.println(size);
+		
+		for(int i=0;i<size;i++)
         {
             temp = (uint8_t)*data;
             itoa(((temp&0xf0)>>4),pBuf,16);
             pBuf++;
             itoa((temp&0x0f),pBuf,16);
+			data++;
+			pBuf++;
         }
     }
     
-    
+	*pBuf = '\r';
+	 pBuf++;
+	*pBuf = '\n';
+	
+	Serial.print("\r\n");
+    Serial.println(buf);
       
     RAK811_sendMessage(buf);
     
 }// end of RAK811_sendData
+
+
+
+//**************************************************************************************************
+// @Function      RAK811_receiveData()
+//--------------------------------------------------------------------------------------------------
+// @Description   receive data
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.  
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   result -1 -> It didn't receive data
+//						 >0	-> It received data
+//--------------------------------------------------------------------------------------------------
+// @Parameters    data - pointer on data to receive 
+//				  size - size input buffer	            
+//**************************************************************************************************
+extern int RAK811_receiveData(char* data, const unsigned int size)
+{
+	uint16_t cntByte=0;
+	int8_t result = -1;
+	char shift[4] = {0,0,0,0};
+   
+    while (Serial2.available() > 0)
+    {
+        char ch = Serial2.read();
+		shift[0] = ch;
+		shift[1] = shift[0];
+		shift[2] = shift[1];
+		shift[3] = shift[2];
+		
+        if ('\r' == ch)//(( 'a' == shift[0]) && ( '0' == shift[0]) && ( 'd' == shift[0]) && ( '0' == shift[0]))
+        {
+			*data = 0;
+            cntByte = 0;
+			result = 1;
+			break;
+        }
+        else
+        {
+            if (size > cntByte)
+            {
+                *data = ch;
+				 data++;
+            }
+            else
+            {
+                Serial.println("\r\nError - Array index out of bounds");
+				result = -1;
+                break;
+            }
+        }
+    }
+	
+	return result;
+    
+}// end of RAK811_receiveData
+
 
 
 
