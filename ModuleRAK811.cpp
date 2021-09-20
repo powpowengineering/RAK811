@@ -7,19 +7,19 @@
 // @Compatible    atmega2560
 //--------------------------------------------------------------------------------------------------
 // @Description   Implementation of the RAK811 functionality.
-//                
+//
 //
 //                Abbreviations:
 //                  None.
-//                  
+//
 //
 //                Global (public) functions:
-//                  
-//                  
+//
+//
 //
 //                Local (private) functions:
-//                  
-//                  
+//
+//
 //
 //--------------------------------------------------------------------------------------------------
 // @Version       1.0.0
@@ -96,7 +96,7 @@ static char buf[RAK811_SIZE_BUF];
 //--------------------------------------------------------------------------------------------------
 // @Description   Init RAK811
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
@@ -114,16 +114,16 @@ void RAK811_init(void)
 //--------------------------------------------------------------------------------------------------
 // @Description   Send message to RAK811
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
 // @Parameters    message - data to send
 //**************************************************************************************************
-void RAK811_sendMessage(const char* const message)
+void RAK811_sendMessage(char* message)
 {
-    Serial2.println(message);
-	Serial.println(message);
+    Serial2.write(message);
+	Serial.write(message);
 }// end of RAK811_sendMessage()
 
 
@@ -133,7 +133,7 @@ void RAK811_sendMessage(const char* const message)
 //--------------------------------------------------------------------------------------------------
 // @Description   Configure RAK811
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
@@ -144,11 +144,11 @@ extern void RAK811_confMode(char mode)
 {
     if (RAK811_MODE_LoRaWAN == mode)
     {
-        RAK811_sendMessage("at+set_config=lora:work_mode:0");
+        RAK811_sendMessage("at+set_config=lora:work_mode:0\r\n");
     }
     else if (RAK811_MODE_LORA_P2P == mode)
     {
-        RAK811_sendMessage("at+set_config=lora:work_mode:1");
+        RAK811_sendMessage("at+set_config=lora:work_mode:1\r\n");
     }
 }// end of RAK811_confMode
 
@@ -159,7 +159,7 @@ extern void RAK811_confMode(char mode)
 //--------------------------------------------------------------------------------------------------
 // @Description   configure LoRaP2P parameters
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
@@ -171,89 +171,156 @@ extern void RAK811_confMode(char mode)
 //                codingrate - 1: 4/5
 //                             2: 4/6
 //                             3: 4/7
-//                             4: 4/8 
+//                             4: 4/8
 //                preamlen - Preamble Length. 5~65535
 //                power - TX power. The unit is in dBm. 5~20
 //**************************************************************************************************
-extern void RAK811_confP2Pprm(const char* const freq,
-                              const char spreadfactor,
-                              const char bandwidth,
-                              const char codingrate,
-                              const char preamlen,
-                              const char power)
+extern void RAK811_confP2Pprm( char* freq,
+                               unsigned char spreadfactor,
+                               unsigned char bandwidth,
+                               unsigned char codingrate,
+                               unsigned char preamlen,
+                               unsigned char power)
 {
     char strPrm[64];
-    
-    snprintf(strPrm,64,"at+set_config=lorap2p:%s:%c:%c:%c:%c:%c",freq,spreadfactor,bandwidth,\
-                                                                    codingrate,preamlen,power);
-    RAK811_sendMessage(strPrm);                                                               
-}// end of RAK811_confP2Pprm
-                              
 
-               
+    snprintf(strPrm,64,"at+set_config=lorap2p:%s:%d:%d:%d:%d:%d\r\n",freq,spreadfactor,bandwidth,\
+                                                                    codingrate,preamlen,power);
+    RAK811_sendMessage(strPrm);
+}// end of RAK811_confP2Pprm
+
+
+
 //**************************************************************************************************
 // @Function      RAK811_confTransferMode()
 //--------------------------------------------------------------------------------------------------
 // @Description   configure LoRaP2P parameters
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
 // @Parameters    mode 1: receiver mode
 //                     2: sender mode
-//**************************************************************************************************               
+//**************************************************************************************************
 extern void RAK811_confTransferMode(const char mode)
 {
     if (RAK811_SENDER_MODE == mode)
     {
-        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:2");
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:2\r\n");
     }
     else if (RAK811_RECEIVER_MODE == mode)
     {
-        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:1");
+        RAK811_sendMessage("at+set_config=lorap2p:transfer_mode:1\r\n");
     }
 }// end of RAK811_confTransferMode
-                         
-                         
+
+
 
 //**************************************************************************************************
 // @Function      RAK811_sendData()
 //--------------------------------------------------------------------------------------------------
 // @Description   send data
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
-// @Parameters    data - pointer on data to transmit              
+// @Parameters    data - pointer on data to transmit
 //**************************************************************************************************
-extern void RAK811_sendData(const char* data)
+extern void RAK811_sendData(char* data)
 {
     int size = strlen(data);
     uint8_t temp=0;
-    char *pBuf = buf;
-    
+    char *pBuf;
+
+
     //clear buf
     for (int i=0;i<RAK811_SIZE_BUF;i++)
     {
         buf[i] = 0;
     }
-    
+
+	snprintf(buf,256,"at+send=lorap2p:");
+
+	pBuf = buf+strlen(buf);
+
     if (RAK811_SIZE_BUF > size)
     {
-        for(int i=0;i<size;i++)
+    Serial.print("\r\nSize data = ");
+    Serial.println(size);
+
+		for(int i=0;i<size;i++)
         {
             temp = (uint8_t)*data;
             itoa(((temp&0xf0)>>4),pBuf,16);
             pBuf++;
             itoa((temp&0x0f),pBuf,16);
+			data++;
+			pBuf++;
         }
     }
-    
+
+	*pBuf = '\r';
+	 pBuf++;
+	*pBuf = '\n';
+
     RAK811_sendMessage(buf);
-    
+
 }// end of RAK811_sendData
+
+
+
+//**************************************************************************************************
+// @Function      RAK811_receiveData()
+//--------------------------------------------------------------------------------------------------
+// @Description   receive data
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   result -1 -> It didn't receive data
+//						 >0	-> It received data
+//--------------------------------------------------------------------------------------------------
+// @Parameters    data - pointer on data to receive
+//				  size - size input buffer
+//**************************************************************************************************
+extern int RAK811_receiveData(char* data, const unsigned int size)
+{
+	static uint16_t cntByte=0;
+	int8_t result = -1;
+
+    while (Serial2.available() > 0)
+    {
+        char ch = Serial2.read();
+
+        if ('\r' == ch)
+        {
+						*(data+cntByte) = 0;
+						cntByte = 0;
+						result = 1;
+			      break;
+        }
+        else
+        {
+            if (size > cntByte)
+            {
+                *(data+cntByte) = ch;
+				 				cntByte++;
+            }
+            else
+            {
+                Serial.println("\r\nError - Array index out of bounds");
+								cntByte = 0;
+								result = -1;
+                break;
+            }
+        }
+    }
+
+	return result;
+
+}// end of RAK811_receiveData
+
 
 
 
@@ -262,34 +329,64 @@ extern void RAK811_sendData(const char* data)
 //--------------------------------------------------------------------------------------------------
 // @Description   parsing data
 //--------------------------------------------------------------------------------------------------
-// @Notes         None.  
+// @Notes         None.
 //--------------------------------------------------------------------------------------------------
 // @ReturnValue   None.
 //--------------------------------------------------------------------------------------------------
 // @Parameters    dataIn - hex format
-//                dataout - symbol format                 
+//                dataout - symbol format
 //**************************************************************************************************
-extern void RAK811_hexToAscii(const char* dataHex, char* dataAscii)
+extern void RAK811_hexToAscii(char* dataHex, char* dataAscii)
 {
     long int temp=0;
     char strtm[3];
-    
-    if (strlen(dataHex) > 0)
+		unsigned int size = strlen(dataHex);
+
+		for (int i=0;i<size;i++)
     {
-        strtm[0] = *dataHex;
+				strtm[0] = *dataHex;
         dataHex++;
         strtm[1] = *dataHex;
         dataHex++;
         strtm[2] = 0;
-        
+
         temp = strtol(strtm,0,16);
         *dataAscii = (char)temp;
-        dataAscii++;
+				dataAscii++;
     }
-    
-    
+
+
 }// end of RAK811_hexToAscii
-                         
+
+
+
+//**************************************************************************************************
+// @Function      RAK811_setState
+//--------------------------------------------------------------------------------------------------
+// @Description   This function is used to change the current state of the device between the sleep 
+//                and the wake-up mode
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    WAKE_UP - module wakes up
+//                SLEEP - module goes to sleep
+//**************************************************************************************************
+void RAK811_setState( RAK811_State_enum  state)
+{
+    if (WAKE_UP == state)
+    {
+        RAK811_sendMessage("at+set_config=device:sleep:0\r\n");
+    }
+    else (SLEEP == state)
+    {
+        RAK811_sendMessage("at+set_config=device:sleep:1\r\n");
+    }
+}// end of RAK811_setState
+
+
+
 //**************************************************************************************************
 //==================================================================================================
 // Definitions of local (private) functions
