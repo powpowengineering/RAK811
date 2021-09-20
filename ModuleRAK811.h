@@ -29,7 +29,11 @@
 // Declarations of global (public) data types
 //**************************************************************************************************
 
-// None.
+typedef enum 
+{
+    WAKE_UP = 0,
+    SLEEP = 1,
+}RAK811_State_enum;
 
 
 //**************************************************************************************************
@@ -75,6 +79,9 @@ void RAK811_sendData( char* data);
 
 // send meassage to RAK811
 void RAK811_sendMessage( char* message);
+
+// Change current state RAK811
+void RAK811_setState( RAK811_State_enum state);
 
 // receive data from RAK811
 int RAK811_receiveData(char* data, const unsigned int size);

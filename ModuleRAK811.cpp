@@ -358,6 +358,35 @@ extern void RAK811_hexToAscii(char* dataHex, char* dataAscii)
 
 }// end of RAK811_hexToAscii
 
+
+
+//**************************************************************************************************
+// @Function      RAK811_setState
+//--------------------------------------------------------------------------------------------------
+// @Description   This function is used to change the current state of the device between the sleep 
+//                and the wake-up mode
+//--------------------------------------------------------------------------------------------------
+// @Notes         None.
+//--------------------------------------------------------------------------------------------------
+// @ReturnValue   None.
+//--------------------------------------------------------------------------------------------------
+// @Parameters    WAKE_UP - module wakes up
+//                SLEEP - module goes to sleep
+//**************************************************************************************************
+void RAK811_setState( RAK811_State_enum  state)
+{
+    if (WAKE_UP == state)
+    {
+        RAK811_sendMessage("at+set_config=device:sleep:0\r\n");
+    }
+    else (SLEEP == state)
+    {
+        RAK811_sendMessage("at+set_config=device:sleep:1\r\n");
+    }
+}// end of RAK811_setState
+
+
+
 //**************************************************************************************************
 //==================================================================================================
 // Definitions of local (private) functions
