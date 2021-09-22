@@ -379,7 +379,7 @@ void RAK811_setState( RAK811_State_enum  state)
     {
         RAK811_sendMessage("at+set_config=device:sleep:0\r\n");
     }
-    else (SLEEP == state)
+    else if(SLEEP == state)
     {
         RAK811_sendMessage("at+set_config=device:sleep:1\r\n");
     }
